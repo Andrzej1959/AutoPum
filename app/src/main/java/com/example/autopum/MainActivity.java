@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editPojazd;
     EditText editKierowca;
     EditText editCel;
+    TextView textIdTrasy;
 
 
     @Override
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         editKierowca = findViewById(R.id.editKierowca);
         editPojazd = findViewById(R.id.editPojazd);
         editCel = findViewById(R.id.editCel);
+        textIdTrasy = findViewById(R.id.textIdTrasy);
     }
 
     public static String IP="ip";
@@ -81,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
 
             Thread.sleep(100);
         }
+
+        textIdTrasy.setText("Trasa nr: " + id_trasy);
 
         Intent intent1 = new Intent(this, ServiceGps.class);
         intent1.putExtra(IP, id_trasy);

@@ -121,10 +121,11 @@ public class ServiceGps extends Service {
 
             final double lat = location.getLatitude();
             final double lon = location.getLongitude();
-            final double time = location.getTime();
+            final long time = location.getTime();
             final  double speed = location.getSpeed();
 
-            DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSSXXX");
+            //DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSSXXX");
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             Date date = new Date(location.getTime());
             final String formatted = format.format(date);
 
@@ -136,7 +137,7 @@ public class ServiceGps extends Service {
                 jsonObject.put("lat", lat);
                 jsonObject.put("lon", lon);
                 jsonObject.put("speed", speed);
-                jsonObject.put("timeFormat", formatted);
+                jsonObject.put("timeGPS", formatted);
                 jsonObject.put("time", time);
                // jsonObject.put("icon", "fa-truck");
                // jsonObject.put("iconColor", "DarkGreen");

@@ -59,5 +59,11 @@
             android:layout_height="wrap_content"
             android:onClick="onClickStart"
             android:text="Start" />
+
+        <TextView
+            android:id="@+id/textIdTrasy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
