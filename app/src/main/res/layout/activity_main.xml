@@ -43,7 +43,7 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="Route to" />
 
         <EditText
             android:id="@+id/editCel"
@@ -65,5 +65,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/buttonStop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClickStop"
+            android:text="stop" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

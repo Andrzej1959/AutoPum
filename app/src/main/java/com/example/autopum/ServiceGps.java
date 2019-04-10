@@ -15,6 +15,8 @@ import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,12 +53,22 @@ public class ServiceGps extends Service {
     }
 
     @Override
+    public void onDestroy() {
+
+       // locationManager.removeUpdates(locationListener);
+       // locationManager = null;
+
+        super.onDestroy();
+    }
+
+    @Override
     public void onCreate() {
 
         super.onCreate();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationProvider = locationManager.getProvider(LocationManager.GPS_PROVIDER);
+        //locationProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
 
         if (locationProvider != null) {
             try {
@@ -66,6 +78,8 @@ public class ServiceGps extends Service {
                 e.printStackTrace();
             }
         }
+
+
 
 
         // Notyfikacje
@@ -81,19 +95,22 @@ public class ServiceGps extends Service {
             channel = "kanalik";
         }
 
-        Notification notification =
-                new Notification.Builder(this, channel)
-                        .setContentTitle("kookokookok")
-                        .setContentText("jijijijijijiiji")
-                        // .setSmallIcon(R.drawable.ikona)
-                        .setContentIntent(pendingIntent)
-                        .setTicker("okokokokokokko")
-                        .build();
+        Notification notification = null;
 
-        startForeground(5555, notification);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notification = new Notification.Builder(this, channel)
+                    .setContentTitle("kookokookok")
+                    .setContentText("jijijijijijiiji")
+                    // .setSmallIcon(R.drawable.ikona)
+                    .setContentIntent(pendingIntent)
+                    .setTicker("okokokokokokko")
+                    .build();
 
+            startForeground(5555, notification);
+        }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private synchronized String createChannel() {
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -112,7 +129,7 @@ public class ServiceGps extends Service {
         return "snap map channel";
     }
 
-
+    Location lastLocation;
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -123,11 +140,19 @@ public class ServiceGps extends Service {
             final double lon = location.getLongitude();
             final long time = location.getTime();
             final  double speed = location.getSpeed();
-
+            final  double bearing = location.getBearing();
+            final  double accuracy = location.getAccuracy();
             //DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSSXXX");
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             Date date = new Date(location.getTime());
             final String formatted = format.format(date);
+
+
+
+            if(lastLocation == null) lastLocation = location;
+
+            final  double dystans = location.distanceTo(lastLocation);
+            lastLocation = location;
 
 
             final JSONObject jsonObject = new JSONObject();
@@ -136,9 +161,13 @@ public class ServiceGps extends Service {
                 jsonObject.put("id_trasy", ip);
                 jsonObject.put("lat", lat);
                 jsonObject.put("lon", lon);
-                jsonObject.put("speed", speed);
+                jsonObject.put("speed", speed*3.6);
+                jsonObject.put("bearing", bearing);
+                jsonObject.put("accuracy", accuracy);
                 jsonObject.put("timeGPS", formatted);
                 jsonObject.put("time", time);
+                jsonObject.put("dystans", dystans);
+
                // jsonObject.put("icon", "fa-truck");
                // jsonObject.put("iconColor", "DarkGreen");
                // jsonObject.put("color", "DarkGreen");
@@ -147,16 +176,16 @@ public class ServiceGps extends Service {
                 e.printStackTrace();
             }
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                    SendJSON.send("http://lukan.sytes.net:1880/mapa",jsonObject);
-
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SendJSON.send(MainActivity.RESTURL + "mapa",jsonObject);
                 }
             }).start();
 
         }
+
+
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {

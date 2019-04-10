@@ -1,9 +1,12 @@
 package com.example.autopum;
 
 import android.Manifest;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,10 +22,11 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
+    public static String RESTURL = "http://lukan.sytes.net:1880/";
 
     Button buttonStart;
     EditText editPojazd;
-    EditText editKierowca;
+    public  EditText editKierowca;
     EditText editCel;
     TextView textIdTrasy;
 
@@ -42,69 +47,104 @@ public class MainActivity extends AppCompatActivity {
             // result of the request.
         }
 
-        buttonStart = (Button) findViewById(R.id.buttonStart);
+        buttonStart =  findViewById(R.id.buttonStart);
         editKierowca = findViewById(R.id.editKierowca);
-        editPojazd = findViewById(R.id.editPojazd);
-        editCel = findViewById(R.id.editCel);
-        textIdTrasy = findViewById(R.id.textIdTrasy);
+        editPojazd =   findViewById(R.id.editPojazd);
+        editCel =      findViewById(R.id.editCel);
+        textIdTrasy =  findViewById(R.id.textIdTrasy);
+       // if (savedInstanceState != null) id_trasy = savedInstanceState.getString("id_trasy");
+
+
+        if(id_trasy != null) textIdTrasy.setText("Trasa nr: " + id_trasy);
+        if(kierowca != null) editKierowca.setText(kierowca);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("id_trasy", "kokkokokokokoook");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Toast.makeText(this,"Restore", Toast.LENGTH_LONG).show();
+
+      //  textIdTrasy.setText("Trasa nr: " + savedInstanceState.getString("id_trasy"));
     }
 
     public static String IP="ip";
-    public String id_trasy;
+    public static String id_trasy;
+    public static String kierowca;
     public JSONObject odp;
+   // public Intent intentGps;
 
     public void onClickStart(View v) throws InterruptedException {
 
-        final JSONObject jsonObject1 = new JSONObject();
-        try {
-            jsonObject1.put("pojazd", editPojazd.getText().toString());
-            jsonObject1.put("kierowca", editKierowca.getText().toString());
-            jsonObject1.put("cel", editCel.getText().toString());
+        if(id_trasy == null) {
+            final JSONObject jsonObject1 = new JSONObject();
+            try {
+                kierowca = editKierowca.getText().toString();
+                jsonObject1.put("pojazd", editPojazd.getText().toString());
+                jsonObject1.put("kierowca", editKierowca.getText().toString());
+                jsonObject1.put("cel", editCel.getText().toString());
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                odp = SendJSON.getResponse("http://lukan.sytes.net:1880/nowatrasa",jsonObject1);
-
-                try {
-                    id_trasy = odp.getString("id");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }).start();
 
-        // czeka na odpowiedż -------------------------------------------------------  może zmienić
-        while (id_trasy == null) {
+            //id_trasy = null;
 
-            Thread.sleep(100);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    odp = SendJSON.getResponse(RESTURL + "nowatrasa", jsonObject1);
+
+                    try {
+                        id_trasy = odp.getString("id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+
+            // czeka na odpowiedż -------------------------------------------------------  może zmienić
+            while (id_trasy == null) {
+
+                Thread.sleep(100);
+            }
+
+            textIdTrasy.setText("Trasa nr: " + id_trasy);
+
+            //
+            intentGps = new Intent(MainActivity.this, ServiceGps.class);
+
+            intentGps.putExtra(IP, id_trasy);
+            intentGps.putExtra("name", editCel.getText().toString() + id_trasy);
+            startService(intentGps);
+
+            Toast.makeText(this, "Start", Toast.LENGTH_LONG).show();
+
+            buttonStart.setEnabled(false);
         }
-
-        textIdTrasy.setText("Trasa nr: " + id_trasy);
-
-        Intent intent1 = new Intent(this, ServiceGps.class);
-        intent1.putExtra(IP, id_trasy);
-        intent1.putExtra("name", editCel.getText().toString() + id_trasy);
-        startService(intent1);
-
-
-        //this.getApplication().startForegroundService(intent);
-
-        //Intent intent = new Intent(this, IntentServiceGPS.class);
-        //startService(intent);
-        //startForegroundService(intent);
-
+        else {
+            Toast.makeText(this, "Trasa już wystartowana", Toast.LENGTH_LONG).show();
+        }
 
     }
 
+    public static Intent intentGps;
 
-
-
+    public void onClickStop(View v){
+        //stopService(intentGps);
+        //stopService(new Intent(MainActivity.this, ServiceGps.class));
+        Toast.makeText(this,"Stop", Toast.LENGTH_LONG).show();
+        this.finish();
+        //buttonStart.setEnabled(true);
+    }
 
 
 }
