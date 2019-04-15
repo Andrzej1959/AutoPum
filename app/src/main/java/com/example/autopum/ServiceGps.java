@@ -16,7 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class ServiceGps extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        ip =  intent.getStringExtra(MainActivity.IP);
+        ip =  intent.getStringExtra(MainActivity.ID_TRASY);
         name = intent.getStringExtra("name");
 
         return super.onStartCommand(intent, flags, startId);
@@ -57,13 +57,12 @@ public class ServiceGps extends Service {
 
        // locationManager.removeUpdates(locationListener);
        // locationManager = null;
-
+        Toast.makeText(this,"Service Destroyed", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
     @Override
     public void onCreate() {
-
         super.onCreate();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -78,9 +77,6 @@ public class ServiceGps extends Service {
                 e.printStackTrace();
             }
         }
-
-
-
 
         // Notyfikacje
 
@@ -108,6 +104,8 @@ public class ServiceGps extends Service {
 
             startForeground(5555, notification);
         }
+
+        Toast.makeText(this,"Service Started", Toast.LENGTH_LONG).show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

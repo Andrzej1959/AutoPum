@@ -77,15 +77,10 @@ public class SendJSON {
             String tmp="";
             while((tmp=reader.readLine())!=null)
                 json.append(tmp).append("\n");
-
-
             reader.close();
 
             JSONObject data = new JSONObject(json.toString());
             return data;
-
-
-
 
         } catch (
                 IOException | JSONException e) {
