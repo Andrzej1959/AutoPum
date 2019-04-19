@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -55,9 +56,10 @@ public class ServiceGps extends Service {
     @Override
     public void onDestroy() {
 
-       // locationManager.removeUpdates(locationListener);
-       // locationManager = null;
         Toast.makeText(this,"Service Destroyed", Toast.LENGTH_LONG).show();
+        locationManager.removeUpdates(locationListener);
+        locationManager = null;
+
         super.onDestroy();
     }
 
@@ -67,7 +69,6 @@ public class ServiceGps extends Service {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationProvider = locationManager.getProvider(LocationManager.GPS_PROVIDER);
-        //locationProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
 
         if (locationProvider != null) {
             try {
@@ -80,8 +81,8 @@ public class ServiceGps extends Service {
 
         // Notyfikacje
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        //Intent notificationIntent = new Intent(this, MainActivity.class);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         String channel; // =  createChannel();
 
@@ -94,11 +95,12 @@ public class ServiceGps extends Service {
         Notification notification = null;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(this, channel)
+            //notification = new Notification.Builder(this, channel)
+            notification = new NotificationCompat.Builder(this, channel)
                     .setContentTitle("kookokookok")
                     .setContentText("jijijijijijiiji")
                     // .setSmallIcon(R.drawable.ikona)
-                    .setContentIntent(pendingIntent)
+                    //.setContentIntent(pendingIntent)
                     .setTicker("okokokokokokko")
                     .build();
 
@@ -127,7 +129,7 @@ public class ServiceGps extends Service {
         return "snap map channel";
     }
 
-    Location lastLocation;
+    Location lastLocation;      //do liczenia dystansu
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -157,6 +159,11 @@ public class ServiceGps extends Service {
             try {
                 jsonObject.put("name", ip);
                 jsonObject.put("id_trasy", ip);
+
+                jsonObject.put("pojazd", MainActivity.pojazd);
+                jsonObject.put("kierowca", MainActivity.kierowca);
+
+
                 jsonObject.put("lat", lat);
                 jsonObject.put("lon", lon);
                 jsonObject.put("speed", speed*3.6);
@@ -165,6 +172,8 @@ public class ServiceGps extends Service {
                 jsonObject.put("timeGPS", formatted);
                 jsonObject.put("time", time);
                 jsonObject.put("dystans", dystans);
+
+
 
                // jsonObject.put("icon", "fa-truck");
                // jsonObject.put("iconColor", "DarkGreen");
@@ -182,8 +191,6 @@ public class ServiceGps extends Service {
             }).start();
 
         }
-
-
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {

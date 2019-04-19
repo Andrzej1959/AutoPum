@@ -2,6 +2,7 @@ package com.example.autopum;
 
 import android.content.Context;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,16 +39,14 @@ public class SendJSON {
         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
     } catch (
-    IOException e) {
-        e.printStackTrace();
-    } finally {
-        if (urlConnection != null) {
-            urlConnection.disconnect();
+                IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
     }
-
-
-}
 
     public static JSONObject getResponse(String targetUrl, JSONObject jsonObject){
         URL url = null;
@@ -73,7 +72,6 @@ public class SendJSON {
 
             StringBuffer json = new StringBuffer(1024);
 
-
             String tmp="";
             while((tmp=reader.readLine())!=null)
                 json.append(tmp).append("\n");
@@ -95,6 +93,75 @@ public class SendJSON {
     }
 
 
+    public static JSONArray getArray(String targetUrl){
+        URL url = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            url = new URL(targetUrl);
+            //url = new URL("http://lukan.sytes.net:1880/mapa");
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoOutput(false);
+            urlConnection.setChunkedStreamingMode(0);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("content-type","application/json");
 
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(urlConnection.getInputStream()));
+
+            StringBuffer json = new StringBuffer(1024);
+
+            String tmp="";
+            while((tmp=reader.readLine())!=null)
+                json.append(tmp).append("\n");
+            reader.close();
+
+            JSONArray data = new JSONArray(json.toString());
+            return data;
+        } catch (
+                IOException | JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return null;
+    }
+
+    public static JSONObject getJSON(String targetUrl){
+        URL url = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            url = new URL(targetUrl);
+            //url = new URL("http://lukan.sytes.net:1880/mapa");
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoOutput(false);
+            urlConnection.setChunkedStreamingMode(0);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("content-type","application/json");
+
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(urlConnection.getInputStream()));
+
+            StringBuffer json = new StringBuffer(1024);
+
+            String tmp="";
+            while((tmp=reader.readLine())!=null)
+                json.append(tmp).append("\n");
+            reader.close();
+
+            JSONObject data = new JSONObject(json.toString());
+            return data;
+
+        } catch (
+                IOException | JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return null;
+    }
 
 }

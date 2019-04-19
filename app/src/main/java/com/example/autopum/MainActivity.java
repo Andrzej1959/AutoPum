@@ -22,11 +22,11 @@ public class MainActivity extends AppCompatActivity {
     public static String RESTURL = "http://lukan.sytes.net:1880/";
 
     public Button buttonStart;
+    public Button buttonKierowca;
     public EditText editPojazd;
     public EditText editKierowca;
     public EditText editCel;
     public TextView textIdTrasy;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,39 +44,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         buttonStart =  findViewById(R.id.buttonStart);
+        buttonKierowca =  findViewById(R.id.buttonKierowca);
         editKierowca = findViewById(R.id.editKierowca);
         editPojazd =   findViewById(R.id.editPojazd);
         editCel =      findViewById(R.id.editCel);
         textIdTrasy =  findViewById(R.id.textIdTrasy);
-       // if (savedInstanceState != null) id_trasy = savedInstanceState.getString("id_trasy");
-
-        if(id_trasy != null) textIdTrasy.setText("Trasa nr: " + id_trasy);
-        if(kierowca != null) editKierowca.setText(kierowca);
     }
-//----------------------------------------------------------------------------------- chyba wyrzucić
-    /*
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("id_trasy", "kokkokokokokoook");
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        Toast.makeText(this,"Restore", Toast.LENGTH_LONG).show();
-
-      //  textIdTrasy.setText("Trasa nr: " + savedInstanceState.getString("id_trasy"));
-    }
-*/
-    //----------------------------------------------------------------------------------- chyba wyrzucić
 
     public static String ID_TRASY ="ip";   //Identyfikator do wiadomości do usługi
     public static String id_trasy;
-    public static String kierowca;
+    public static String kierowca = "Name";
+    public static String pojazd = "Vehicle";
     public JSONObject odp;
-   // public Intent intentGps;
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        if(id_trasy != null) textIdTrasy.setText("Trasa nr: " + id_trasy);
+        else textIdTrasy.setText("");
+
+        if(kierowca != null) editKierowca.setText(kierowca);
+        if(pojazd != null) editPojazd.setText(pojazd);
+    }
 
     public void onClickStart(View v) throws InterruptedException {
 
@@ -111,7 +101,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             textIdTrasy.setText("Trasa nr: " + id_trasy);
-            intentGps = new Intent(MainActivity.this, ServiceGps.class);
+
+            if(intentGps == null) intentGps = new Intent(MainActivity.this, ServiceGps.class);
+
             intentGps.putExtra(ID_TRASY, id_trasy);
             intentGps.putExtra("name", editCel.getText().toString() + id_trasy);
             startService(intentGps);
@@ -126,11 +118,20 @@ public class MainActivity extends AppCompatActivity {
     public static Intent intentGps;
 
     public void onClickStop(View v){
-
         stopService(intentGps);
         buttonStart.setEnabled(true);
         id_trasy = null;
-        //this.finish();
     }
 
+    public void onClickKierowca(View v){
+        Intent intent = new Intent(MainActivity.this, DaneActivity.class);
+        intent.putExtra("lista", "listakierowcow");
+        startActivity(intent);
+    }
+
+    public void onClickPojazd(View v){
+        Intent intent = new Intent(MainActivity.this, DaneActivity.class);
+        intent.putExtra("lista", "listapojazdow");
+        startActivity(intent);
+    }
 }
