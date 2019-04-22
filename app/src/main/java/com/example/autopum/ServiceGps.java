@@ -162,7 +162,7 @@ public class ServiceGps extends Service {
 
                 jsonObject.put("pojazd", MainActivity.pojazd);
                 jsonObject.put("kierowca", MainActivity.kierowca);
-
+                jsonObject.put("cel", MainActivity.cel);
 
                 jsonObject.put("lat", lat);
                 jsonObject.put("lon", lon);

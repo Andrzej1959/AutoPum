@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
     public static String RESTURL = "http://lukan.sytes.net:1880/";
+    //public static String RESTURL = "http://lukan.sytes.net:1880/";
 
     public Button buttonStart;
     public Button buttonKierowca;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     public static String id_trasy;
     public static String kierowca = "Name";
     public static String pojazd = "Vehicle";
+    public static String cel = "Cel";
     public JSONObject odp;
 
     @Override
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(kierowca != null) editKierowca.setText(kierowca);
         if(pojazd != null) editPojazd.setText(pojazd);
+
     }
 
     public void onClickStart(View v) throws InterruptedException {
@@ -76,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
                 kierowca = editKierowca.getText().toString();
                 jsonObject1.put("pojazd", editPojazd.getText().toString());
                 jsonObject1.put("kierowca", editKierowca.getText().toString());
+                cel = editCel.getText().toString();
                 jsonObject1.put("cel", editCel.getText().toString());
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
