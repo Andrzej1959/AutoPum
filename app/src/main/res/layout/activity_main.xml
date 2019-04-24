@@ -84,12 +84,26 @@
             android:inputType="textPersonName"
             android:text="Cel" />
 
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Odometer" />
+
+        <EditText
+            android:id="@+id/editTextLicznik"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:text="0" />
+
         <Button
             android:id="@+id/buttonStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onClickStart"
-            android:text="Start" />
+            android:text="Start tracking" />
 
         <TextView
             android:id="@+id/textIdTrasy"
@@ -102,6 +116,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onClickStop"
-            android:text="stop" />
+            android:text="stop tracking" />
+
+        <Button
+            android:id="@+id/buttonRefueling"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClickRefueling"
+            android:text="refueling" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

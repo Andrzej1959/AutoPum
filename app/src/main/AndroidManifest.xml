@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DaneActivity"></activity>
+        <activity android:name=".TankowanieActivity"></activity>
+        <activity android:name=".DaneActivity" />
 
         <service
             android:name=".ServiceGps"
