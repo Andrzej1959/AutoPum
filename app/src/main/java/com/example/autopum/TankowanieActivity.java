@@ -12,21 +12,55 @@ import org.json.JSONObject;
 
 public class TankowanieActivity extends AppCompatActivity {
 
+    public TextView textViewData;
+
 
     public EditText editTextLitry;
     public TextView editTextCena;
     public EditText editTextLicznik;
     public String kierowca;
     public String pojazd;
+    public  JSONObject tankowanie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tankowanie);
 
+        textViewData = findViewById(R.id.textViewData);
+
         editTextLitry = findViewById(R.id.editTextLitry);
         editTextCena = findViewById(R.id.editTextCena);
         editTextLicznik = findViewById(R.id.editTextLicznik);
+
+
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                tankowanie = SendJSON.getJSON( MainActivity.RESTURL + "tankowanie?pojazd=" + MainActivity.pojazd);
+            }
+        });
+
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            textViewData.setText(tankowanie.getString("data") + "\nVolume: " + tankowanie.getString("litry") + " l\nOdometer: "
+            + tankowanie.getString("licznik") + " km");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onClickClose(View v){
+        finish();
     }
 
     public void onClickSend(View v){
@@ -38,9 +72,9 @@ public class TankowanieActivity extends AppCompatActivity {
             pojazd = MainActivity.pojazd;
             jsonObject.put("pojazd", pojazd);
             jsonObject.put("kierowca", kierowca);
-            jsonObject.put("litry", editTextLitry.getText().toString());
-            jsonObject.put("cena", editTextCena.getText().toString());
-            jsonObject.put("licznik", editTextLicznik.getText().toString());
+            jsonObject.put("litry", "0" + editTextLitry.getText().toString());
+            jsonObject.put("cena", "0" + editTextCena.getText().toString());
+            jsonObject.put("licznik", "0" + editTextLicznik.getText().toString());
 
         } catch (JSONException e) {
             e.printStackTrace();

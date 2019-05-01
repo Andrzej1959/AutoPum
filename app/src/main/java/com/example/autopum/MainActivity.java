@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     public static String kierowca;
     public static String pojazd;
     public static String cel = "Cel";
+
     public JSONObject odp;
 
     @Override
@@ -90,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
                     kierowca = editKierowca.getText().toString();
                     jsonObject1.put("pojazd", editPojazd.getText().toString());
                     jsonObject1.put("kierowca", editKierowca.getText().toString());
-                    jsonObject1.put("licznik", editTextLicznik.getText().toString());
+
+                    jsonObject1.put("licznik", "0" + editTextLicznik.getText().toString());
                     cel = editCel.getText().toString();
                     jsonObject1.put("cel", editCel.getText().toString());
 
@@ -98,9 +100,10 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                new Thread(new Runnable() {
+                Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
+
                         odp = SendJSON.getResponse(RESTURL + "nowatrasa", jsonObject1);
 
                         try {
@@ -109,12 +112,9 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-                }).start();
-
-                // czeka na odpowiedż -------------------------------------------------------  może zmienić
-                while (id_trasy == null) {
-                    Thread.sleep(100);
-                }
+                });
+                thread.start();
+                thread.join();
 
                 textIdTrasy.setText("Trasa nr: " + id_trasy);
 

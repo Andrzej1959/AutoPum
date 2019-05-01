@@ -31,19 +31,19 @@ public class DaneActivity extends AppCompatActivity {
         listview = findViewById(R.id.lista);
         lista = getIntent().getStringExtra("lista").toString();
 
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 tablica = SendJSON.getArray( MainActivity.RESTURL + lista);
             }
-        }).start();
+        });
 
-        while (tablica == null) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         final ArrayList<String> list = new ArrayList<String>();
