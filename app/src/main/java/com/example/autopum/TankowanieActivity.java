@@ -38,7 +38,10 @@ public class TankowanieActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                tankowanie = SendJSON.getJSON( MainActivity.RESTURL + "tankowanie?pojazd=" + MainActivity.pojazd);
+                try {
+                    tankowanie = SendJSON.getJSON( MainActivity.RESTURL + "tankowanie?pojazd=" + MainActivity.pojazd);
+                }catch (Exception e) {
+                }
             }
         });
 
@@ -52,6 +55,7 @@ public class TankowanieActivity extends AppCompatActivity {
 
 
         try {
+            if(tankowanie.has("pojazd"))
             textViewData.setText(tankowanie.getString("data") + "\nVolume: " + tankowanie.getString("litry") + " l\nOdometer: "
             + tankowanie.getString("licznik") + " km");
         } catch (JSONException e) {
